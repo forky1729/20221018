@@ -35,24 +35,30 @@ try:
     s_t = time.time()
     v = 3
     GPIO.output(troyka, v)
-    while adc1()*3.3/256<1.04:
+    while adc1()*3.3/256<3.2:
         print(adc1()*3.3/256)
-        res.append(adc1()*3.3/256)
+        res.append(adc1())
     GPIO.output(troyka, 0)
-    while adc1()*3.3/256>0.1:
+    while adc1()*3.3/256>0.2:
         print(adc1()*3.3/256)
-        res.append(adc1()*3.3/256)
+        res.append(adc1())
     f_t = time.time()
 finally:
     GPIO.output(dac, [0,0,0,0,0,0,0,0])
 
 print("Time = ", f_t - s_t)
 print("Period = ", (f_t - s_t)/len(res))
+print("F = ", len(res)/(f_t - s_t))
+
 
 res_str = [str(item) for item in res]
+res_settings = [str((f_t - s_t)/len(res)), str(max(res)/len(res))]
 
 with open("data.txt", "w") as outfile:
     outfile.write("\n".join(res_str))
+
+with open("settings.txt", "w") as outfile:
+    outfile.write("\n".join(res_settings))
 
 plt.plot(res)
 plt.show()
